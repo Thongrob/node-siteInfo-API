@@ -6,14 +6,15 @@ services:
     networks:
       - web_network
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - ./mariadb/initdb/:/docker-entrypoint-initdb.d
+      - ./mariadb/data/:/var/lib/mysql/
     environment:
-      - MYSQL_ROOT_PASSWORD=1234
-      - MYSQL_DATABASE=jtj_grooming_db
-      - MYSQL_USER=thongrob
-      - MYSQL_PASSWORD=thongrob
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=users_db
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=123456
     ports:
-      - 3307:3306
+      - 3306:3306
     restart: always
   
   phpmyadmin:
@@ -33,17 +34,17 @@ services:
       - db
     build: .
     image: nodejs_docker:1.0  
-    container_name: nodejs-docker-grooming
+    container_name: nodejs-siteinfo
     volumes:
       - /usr/app/node_modules
       - .:/usr/app
     ports:
-      - 3335:3000
+      - 3333:3000
     environment:
       - MYSQL_ROOT_PASSWORD=1234
-      - MYSQL_DATABASE=jtj_grooming_db
-      - MYSQL_USER=thongrob
-      - MYSQL_PASSWORD=thongrob
+      - MYSQL_DATABASE=users_db
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=123456
     networks:
       - web_network
     restart: always
