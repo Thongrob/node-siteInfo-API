@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:5.7
+    networks:
+      - web_network
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=jtj_grooming_db
+      - MYSQL_USER=thongrob
+      - MYSQL_PASSWORD=thongrob
+    ports:
+      - 3307:3306
+    restart: always
+  
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin
+    networks:
+      - web_network
+    environment:
+      - PMA_ARBITRARY=1
+    ports:
+      - 7770:80
+    restart: always
+
+  nodejs:
+    depends_on:
+      - db
+    build: .
+    image: nodejs_docker:1.0  
+    container_name: nodejs-docker-grooming
+    volumes:
+      - /usr/app/node_modules
+      - .:/usr/app
+    ports:
+      - 3335:3000
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=jtj_grooming_db
+      - MYSQL_USER=thongrob
+      - MYSQL_PASSWORD=thongrob
+    networks:
+      - web_network
+    restart: always
+
+networks:
+  web_network:
+    name: node-docker
+    driver: bridge
